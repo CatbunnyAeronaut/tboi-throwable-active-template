@@ -45,7 +45,7 @@ local function MakeThrowableActive(mod, collectible, identifier, effect, wispCou
                 effect(player)
 
                 local slot = data[slotIdentifier]
-                if slot then
+                if slot ~= -1 then
                     if slot == ActiveSlot.SLOT_PRIMARY then -- Prevent possible cheese with Schoolbag
                         if player:GetActiveItem(slot) ~= collectible then
                             slot = ActiveSlot.SLOT_SECONDARY
@@ -56,26 +56,26 @@ local function MakeThrowableActive(mod, collectible, identifier, effect, wispCou
                         end
                     end
                     player:DischargeActiveItem(slot) -- Since the item was used successfully, actually discharge the item
-                    if data[heartChargeIdentifier] then
-                        local spendHearts = data[heartChargeIdentifier]
-                        if player:GetPlayerType() == PlayerType.PLAYER_BETHANY then
-                            player:AddSoulCharge(-1 * spendHearts)
-                        elseif player:GetPlayerType() == PlayerType.PLAYER_BETHANY_B then
-                            player:AddBloodCharge(-1 * spendHearts)
-                        end
-                        if player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
-                            if REPENTOGON then
-                                local wispXmlData = XMLData.GetEntryById(XMLNode.WISP, collectible)
-                                if wispXmlData then
-                                    local count = wispXmlData.count or 1
-                                    for i = 1, count do
-                                        player:AddWisp(collectible, player.Position)
-                                    end
-                                end
-                            else
-                                for i = 1, wispCount do
+                end
+                if data[heartChargeIdentifier] then
+                    local spendHearts = data[heartChargeIdentifier]
+                    if player:GetPlayerType() == PlayerType.PLAYER_BETHANY then
+                        player:AddSoulCharge(-1 * spendHearts)
+                    elseif player:GetPlayerType() == PlayerType.PLAYER_BETHANY_B then
+                        player:AddBloodCharge(-1 * spendHearts)
+                    end
+                    if player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
+                        if REPENTOGON then
+                            local wispXmlData = XMLData.GetEntryById(XMLNode.WISP, collectible)
+                            if wispXmlData then
+                                local count = wispXmlData.count or 1
+                                for i = 1, count do
                                     player:AddWisp(collectible, player.Position)
                                 end
+                            end
+                        else
+                            for i = 1, wispCount do
+                                player:AddWisp(collectible, player.Position)
                             end
                         end
                     end
